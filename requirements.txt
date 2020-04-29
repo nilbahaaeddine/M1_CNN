@@ -1,4 +1,7 @@
-numpy==1.16.*
-matplotlib==3.*
+numpy
+matplotlib
 pandas
-seaborn==0.8.1
+seaborn
+mnist
+keras
+sklearn
