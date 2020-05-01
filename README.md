@@ -1,4 +1,5 @@
 # M1_CNN
+## Magiefication
 A nice description
 
 ## Requirements
@@ -23,3 +24,5 @@ The `requirements.txt` file lists all the Python libraries on which the notebook
 ```
 pip install -r requirements.txt
 ```
+
+The `ressouces` folder contains all the secondary files necessary for the project. (Gantt diagram, report)
