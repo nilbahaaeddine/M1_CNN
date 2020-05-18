@@ -17,40 +17,37 @@ class ConvolutionalNeuralNetwork:
         for i in range(len(self.layers)):
             print(f'\tLayer #{i + 1} => {type(self.layers[i])}')
             if(type(self.layers[i]) is Dense):
-                print(f'\t\tThis layer uses the {self.layers[i].activation_func} function as its activation')
+                print(f'\t\tThis layer uses the {self.layers[i].activation_function} function as its activation')
         
     def addLayer(self, layer):
         self.nbLayers += 1
         self.layers.append(layer)
-        
+
     def forward_propagation(self, X):
         outPrevious = 0
         for num_layer in range (0, self.nbLayers):
             if(type(self.layers[num_layer]) is Conv3x3):
                 if num_layer == 0:
                     X = (X / 255) - 0.5
-                    outPrevious = self.layers[num_layer].forward(X)
+                    outPrevious = self.layers[num_layer].forward_propagation(X)
                 else: 
-                    outPrevious = self.layers[num_layer].forward(outPrevious)
+                    outPrevious = self.layers[num_layer].forward_propagation(outPrevious)
             
             if(type(self.layers[num_layer]) is Relu):
-                outPrevious = self.layers[num_layer].forward(outPrevious)
+                outPrevious = self.layers[num_layer].forward_propagation(outPrevious)
                       
             if(type(self.layers[num_layer]) is MaxPool2):
-                outPrevious = self.layers[num_layer].forward(outPrevious) 
+                outPrevious = self.layers[num_layer].forward_propagation(outPrevious) 
               
             if(type(self.layers[num_layer]) is Dropout):
-                outPrevious = self.layers[num_layer].forward(outPrevious)
+                outPrevious = self.layers[num_layer].forward_propagation(outPrevious)
                   
             if(type(self.layers[num_layer]) is Flatten):
-                outPrevious = self.layers[num_layer].forward(outPrevious) 
+                outPrevious = self.layers[num_layer].forward_propagation(outPrevious) 
                 
             if(type(self.layers[num_layer]) is Dense):
-                outPrevious = self.layers[num_layer].forward(outPrevious)
+                outPrevious = self.layers[num_layer].forward_propagation(outPrevious)
         return outPrevious
-
-    def cost_function(self, out, y):
-        return (-np.log(out[y]))
 
     def backward_propagation(self, out, y, eta):
         previousGradient = 0
@@ -59,17 +56,20 @@ class ConvolutionalNeuralNetwork:
                 # Init the gradient at the end
                 gradient = np.zeros(10)
                 gradient[y] = -1 / out[y]
-                previousGradient = self.layers[num_layer].backprop(gradient, eta)
+                previousGradient = self.layers[num_layer].backward_propagation(gradient, eta)
             if(type(self.layers[num_layer]) is Flatten):
-                previousGradient = self.layers[num_layer].backprop(previousGradient)
+                previousGradient = self.layers[num_layer].backward_propagation(previousGradient)
             if(type(self.layers[num_layer]) is Dropout):
-                previousGradient = self.layers[num_layer].backprop(previousGradient)
+                previousGradient = self.layers[num_layer].backward_propagation(previousGradient)
             if(type(self.layers[num_layer]) is MaxPool2):
-                previousGradient = self.layers[num_layer].backprop(previousGradient)
+                previousGradient = self.layers[num_layer].backward_propagation(previousGradient)
             if(type(self.layers[num_layer]) is Relu):
-                previousGradient = self.layers[num_layer].backprop(previousGradient)
+                previousGradient = self.layers[num_layer].backward_propagation(previousGradient)
             if(type(self.layers[num_layer]) is Conv3x3):
-                previousGradient = self.layers[num_layer].backprop(previousGradient, eta)
+                previousGradient = self.layers[num_layer].backward_propagation(previousGradient, eta)
+
+    def cost_function(self, out, y):
+        return (-np.log(out[y]))
 
     def convert_prob_into_class(self, probs):
         probs = np.copy(probs) # To not to lose props, i.e. y_hat
@@ -91,7 +91,6 @@ class ConvolutionalNeuralNetwork:
         eta = kwargs.get("eta", 0.01)
         cost_history = []
         accuracy_history = []
-        t = np.zeros(epochs)
         startTime = time.time()
         for nb_epochs in range(epochs):
             cost_all_images = []

@@ -10,7 +10,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
         # We divide by 9 to reduce the variance of our initial values
         self.filters = np.random.randn(num_filters, 3, 3) / 9
 
-    def iterate_regions(self, image):
+    def iterate_regions_forward(self, image):
         '''
         Generates all possible 3x3 image regions using valid padding.
         - image is a 2d numpy array
@@ -22,7 +22,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
                 im_region = image[i:(i + 3), j:(j + 3)]
                 yield im_region, i, j                
 
-    def forward(self, input):
+    def forward_propagation(self, input):
         '''
         Performs a forward pass of the conv layer using the given input.
         Returns a 3d numpy array with dimensions (h, w, num_filters).
@@ -33,7 +33,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
             self.last_input = input
             h, w = input.shape
             output = np.zeros((h - 2, w - 2, self.num_filters))
-            for im_region, i, j in self.iterate_regions(input):
+            for im_region, i, j in self.iterate_regions_forward(input):
                 output[i, j] = np.sum(im_region * self.filters, axis=(1, 2))
 
         else: # Second conv we catch the output of maxpool (3D)
@@ -42,13 +42,13 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
             output = np.zeros((h - 2, w - 2, self.num_filters))
             temp=np.transpose(input)
             for k in range(0, filters):
-                for im_region, i, j in self.iterate_regions(temp[k]):
+                for im_region, i, j in self.iterate_regions_forward(temp[k]):
                     output[i, j] = np.sum(im_region * self.filters, axis=(1, 2))
         
         self.output = output
         return output
     
-    def iterate_regions_back(self, image):
+    def iterate_regions_backward(self, image):
         '''
         Generates non-overlapping 2x2 image regions to pool over.
         - image is a 2d numpy array
@@ -62,7 +62,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
                 im_region = image[(i * 2):(i * 2 + 2), (j * 2):(j * 2 + 2)]
                 yield im_region, i, j
 
-    def backprop(self, d_L_d_out, learn_rate):
+    def backward_propagation(self, d_L_d_out, learn_rate):
         '''
         Performs a backward pass of the conv layer.
         - d_L_d_out is the loss gradient for this layer's outputs.
@@ -71,7 +71,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
         if(self.last_input.ndim == 2): # 1er conv on recup l'image 2D
             d_L_d_filters = np.zeros(self.filters.shape)
 
-            for im_region, i, j in self.iterate_regions(self.last_input):
+            for im_region, i, j in self.iterate_regions_forward(self.last_input):
                 for f in range(self.num_filters):
                     d_L_d_filters[f] += d_L_d_out[i, j, f] * im_region
 
@@ -86,7 +86,7 @@ class Conv3x3: # A Convolution layer using 3x3 filters.
         else:
             d_L_d_input = np.zeros(self.last_input.shape)
 
-            for im_region, i, j in self.iterate_regions_back(self.last_input):
+            for im_region, i, j in self.iterate_regions_backward(self.last_input):
                 h, w, f = im_region.shape
                 amax = np.amax(im_region, axis=(0, 1))
 

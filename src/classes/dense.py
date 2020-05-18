@@ -2,12 +2,12 @@ import numpy as np
 
 class Dense: # A standard fully-connected layer with softmax activation.
     def __init__(self, input_len, nodes, **kwargs):
-        self.activation_func = kwargs.get("activation", None)
+        self.activation_function = kwargs.get("activation", None)
         # We divide by input_len to reduce the variance of our initial values
         self.weights = np.random.randn(input_len, nodes) / input_len
         self.biases = np.zeros(nodes)
 
-    def forward(self, input):
+    def forward_propagation(self, input):
         '''
         Performs a forward pass of the softmax layer using the given input depending on its activation function.
         Returns a 1d numpy array containing the respective probability values.
@@ -19,19 +19,19 @@ class Dense: # A standard fully-connected layer with softmax activation.
 
         input_len, nodes = self.weights.shape
         
-        if(self.activation_func == 'softmax'):
+        if(self.activation_function == 'softmax'):
             output = self.softmax_forward(input)
     
         return output
 
-    def backprop(self, d_L_d_out, learn_rate):
+    def backward_propagation(self, d_L_d_out, learn_rate):
         '''
         Performs a backward pass of the softmax layer depending on its activation function.
         Returns the loss gradient for this layer's inputs.
         - d_L_d_out is the loss gradient for this layer's outputs.
         - learn_rate is a float
         '''
-        if(self.activation_func == 'softmax'):
+        if(self.activation_function == 'softmax'):
             output = self.softmax_backprop(d_L_d_out, learn_rate)
 
         return output

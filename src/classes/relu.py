@@ -4,12 +4,12 @@ class Relu:
     def __init__(self):
         self.params = []
 
-    def forward(self, input):
+    def forward_propagation(self, input):
         self.last_input = input
         output = np.maximum(0, input)  # Element-wise
         return output
 
-    def backprop(self, dOut):
+    def backward_propagation(self, dOut):
         '''
         f′(x) = {1 if x > 0}
                 {0 otherwise}

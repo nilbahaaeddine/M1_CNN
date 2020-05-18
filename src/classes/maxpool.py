@@ -15,7 +15,7 @@ class MaxPool2: # A Max Pooling layer using a pool size of 2.
                 im_region = image[(i * 2):(i * 2 + 2), (j * 2):(j * 2 + 2)]
                 yield im_region, i, j
 
-    def forward(self, input):
+    def forward_propagation(self, input):
         '''
         Performs a forward pass of the maxpool layer using the given input.
         Returns a 3d numpy array with dimensions (h / 2, w / 2, num_filters).
@@ -30,7 +30,7 @@ class MaxPool2: # A Max Pooling layer using a pool size of 2.
 
         return output
 
-    def backprop(self, d_L_d_out):
+    def backward_propagation(self, d_L_d_out):
         '''
         Performs a backward pass of the maxpool layer.
         Returns the loss gradient for this layer's inputs.
