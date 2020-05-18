@@ -71,12 +71,6 @@ class ConvolutionalNeuralNetwork:
     def cost_function(self, out, y):
         return (-np.log(out[y]))
 
-    def convert_prob_into_class(self, probs):
-        probs = np.copy(probs) # To not to lose props, i.e. y_hat
-        probs[probs > 0.5] = 1
-        probs[probs <= 0.5] = 0
-        return probs
-
     def accuracy(self, out, y):
         acc = 1 if np.argmax(out) == y else 0
         return acc       
