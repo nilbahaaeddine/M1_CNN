@@ -10,10 +10,10 @@ GoFocus members :
 
 ## Requirements
 Python 3 is used during development and the following libraries are required to run the code provided in the notebook :
-* Numpy = 1.17.2
+* NumPy = 1.17.2
 * Matplotlib = 3.1.1
 * Keras = 2.3.1
-* Tensorflow = 2.2.0
+* TensorFlow = 2.2.0
 
 ## Notes
 The `requirements.txt` file lists all the Python libraries on which the notebooks of this project depend, you can install them using :
